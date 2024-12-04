@@ -1,23 +1,38 @@
-print('Добро пожаловать в Персональный помощник!')
-welcome_msg: str = '''Выберите действие:
+from common import get_n_from_user
+from notes import notes_management
+
+
+print('Добро пожаловать в Персональный помощник!\n\n')
+
+
+def input_command() -> int:
+    return get_n_from_user(
+        inp_msg='''Выберите действие:
 \t1. Управление заметками
 \t2. Управление задачами
 \t3. Управление контактами
 \t4. Управление финансовыми записями
 \t5. Калькулятор
 \t6. Выход
-Введите номер действия: '''
+Введите номер действия: ''',
+        first_n=1,
+        last_n=6,
+        input_mistake_msg='Ошибка ввода номера действия!'
+    )
 
 
-def get_command_n_from_user() -> int:
-    inp = input(welcome_msg)
-    while not inp.isdigit() or (inp := int(inp)) < 1 or 6 < inp:
-        print('Ошибка ввода номера действия!')
-        inp = input(welcome_msg)
-    return inp
-
-
-command_n: int = get_command_n_from_user()
+command_n: int = input_command()
 while command_n != 6:
-    print('Выбранное действие:', command_n)
-    command_n: int = get_command_n_from_user()
+    match command_n:
+        case 1:
+            notes_management()
+        case 2:
+            pass
+        case 3:
+            pass
+        case 4:
+            pass
+        case 5:
+            pass
+    print()
+    command_n: int = input_command()
