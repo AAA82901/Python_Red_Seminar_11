@@ -1,6 +1,6 @@
 from datetime import datetime
 from os.path import exists
-from json import load
+from json import load, dump
 from common import get_n_from_user
 from prettytable import PrettyTable
 
@@ -31,6 +31,23 @@ class Note:
 
 # region Работа с файлом
 file_name: str = 'notes.json'
+
+
+def save_all_in_json() -> None:
+    global file_name
+    lst_to_dump: list[dict] = [
+        {
+            'id': note.id,
+            'title': note.title,
+            'content': note.content,
+            'timestamp': note.timestamp_str
+        }
+        for note in Note.instances
+    ]
+    with open(file=file_name, mode='w', encoding='utf8') as file:
+        dump(lst_to_dump, file)
+
+
 if exists(file_name):
     with open(file=file_name, encoding='utf8') as file:
         for d in load(file):
@@ -69,6 +86,7 @@ def notes_management() -> None:
                 content=input('\t\t\tВведите новую заметку: '),
                 timestamp=datetime.now()
             )
+            save_all_in_json()
         case 2:
             if Note.instances:
                 tbl = PrettyTable()
@@ -106,8 +124,10 @@ def notes_management() -> None:
                                     new_title=input('\t\t\tВведите название новой заметки: '),
                                     new_content=input('\t\t\tВведите новую заметку: ')
                                 )
+                                save_all_in_json()
                             case 5:
                                 del Note.instances[i]
+                                save_all_in_json()
                         # endregion
                         break
                 else:
