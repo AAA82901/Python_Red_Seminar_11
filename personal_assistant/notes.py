@@ -1,6 +1,7 @@
 from datetime import datetime
 from os.path import exists
 from json import load, dump
+from csv import reader, writer
 from common import get_n_from_user
 from prettytable import PrettyTable
 
@@ -73,10 +74,11 @@ def notes_management() -> None:
 \t\t3. Просмотр подробностей заметки.
 \t\t4. Редактирование заметки.
 \t\t5. Удаление заметки.
-\t\t6. Импорт и экспорт заметок в формате CSV.
+\t\t6. Импорт заметок в формате CSV.
+\t\t7. Экспорт заметок в формате CSV.
 \tВведите номер действия: ''',
         first_n=1,
-        last_n=6,
+        last_n=7,
         input_mistake_msg='Ошибка ввода номера действия!'
     )):
         case 1:
@@ -133,4 +135,36 @@ def notes_management() -> None:
                 else:
                     print(input_mistake_msg)
         case 6:
-            pass
+            # region Выбор csv-файла
+            csv_file_name: str = input('\t\t\tВыберете имя/путь файла для импорта: ')
+            while not exists(csv_file_name):
+                print('\t\t\tОшибка. Такого файла нет.')
+                csv_file_name: str = input('\t\t\tВыберете имя/путь файла для импорта: ')
+            # endregion
+            with open(file=csv_file_name, mode='r', encoding='utf8') as csvfile:
+                csvreader = reader(csvfile)
+                next(csvreader)  # избавляемся от заголовка
+                cur_id = (Note.instances[-1].id + 1) if Note.instances else 1
+                for row in csvreader:
+                    Note(
+                        id=cur_id,
+                        title=row[1],
+                        content=row[2],
+                        timestamp=datetime.strptime(row[3], '%Y-%m-%d %H:%M:%S')
+                    )
+                save_all_in_json()
+        case 7:
+            lst_to_dump: list = [
+                ['id', 'title', 'content', 'timestamp']
+            ] + [
+                [getattr(note, attr_name) for attr_name in ('id', 'title', 'content', 'timestamp_str')]
+                for note in Note.instances
+            ]
+            # region Выбор csv-файла
+            csv_file_name: str = input('\t\t\tВыберете имя/путь файла для экспорта: ')
+            while not csv_file_name:
+                print('\t\t\tОшибка. Вы ничего не ввели.')
+                csv_file_name: str = input('\t\t\tВыберете имя/путь файла для экспорта: ')
+            # endregion
+            with open(file=csv_file_name, mode='w', encoding='utf8', newline='') as csvfile:
+                writer(csvfile, ).writerows(lst_to_dump)
