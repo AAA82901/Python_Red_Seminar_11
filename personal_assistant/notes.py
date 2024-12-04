@@ -1,4 +1,6 @@
 from datetime import datetime
+from os.path import exists
+from json import load
 from common import get_n_from_user
 from prettytable import PrettyTable
 
@@ -7,14 +9,13 @@ class Note:
     instances: list = []
     def __init__(
             self,
+            id: int,
             title: str,
-            content: str
-
+            content: str,
+            timestamp: datetime
     ):
-        for attr_name in ('title', 'content'):
+        for attr_name in ('id', 'title', 'content', 'timestamp'):
             setattr(self, attr_name, eval(attr_name))
-        self.timestamp = datetime.now()
-        self.id: int = (self.instances[-1].id + 1) if self.instances else 1
         self.instances.append(self)
 
     def _get_timestamp_str(self) -> str:
@@ -26,6 +27,25 @@ class Note:
         self.title: str = new_title
         self.content: str = new_content
         self.timestamp = datetime.now()
+
+
+# region Работа с файлом
+file_name: str = 'notes.json'
+if exists(file_name):
+    with open(file=file_name, encoding='utf8') as file:
+        for d in load(file):
+            d['timestamp'] = datetime.strptime(d['timestamp'], '%Y-%m-%d %H:%M:%S')
+            Note(
+                **{
+                    attr_name: d[attr_name]
+                    for attr_name in ('id', 'title', 'content', 'timestamp')
+                }
+            )
+else:
+    # создание файла
+    with open(file=file_name, mode='w', encoding='utf8') as file:
+        file.write('[]')
+# endregion
 
 
 def notes_management() -> None:
@@ -44,8 +64,10 @@ def notes_management() -> None:
     )):
         case 1:
             Note(
+                id=(Note.instances[-1].id + 1) if Note.instances else 1,
                 title=input('\t\t\tВведите название новой заметки: '),
-                content=input('\t\t\tВведите новую заметку: ')
+                content=input('\t\t\tВведите новую заметку: '),
+                timestamp=datetime.now()
             )
         case 2:
             if Note.instances:
