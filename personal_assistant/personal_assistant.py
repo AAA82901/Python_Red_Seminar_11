@@ -2,6 +2,7 @@ from common import get_n_from_user
 from notes import notes_management
 from tasks import tasks_management
 from contacts import contacts_management
+from finance import finance_managemnet
 from calculator import calculator
 
 
@@ -34,7 +35,7 @@ while command_n != 6:
         case 3:
             contacts_management()
         case 4:
-            pass
+            finance_managemnet()
         case 5:
             calculator()
     print()
