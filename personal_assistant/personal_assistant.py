@@ -1,6 +1,7 @@
 from common import get_n_from_user
 from notes import notes_management
 from tasks import tasks_management
+from contacts import contacts_management
 
 
 print('Добро пожаловать в Персональный помощник!\n\n')
@@ -30,7 +31,7 @@ while command_n != 6:
         case 2:
             tasks_management()
         case 3:
-            pass
+            contacts_management()
         case 4:
             pass
         case 5:
