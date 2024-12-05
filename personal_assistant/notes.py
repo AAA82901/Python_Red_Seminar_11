@@ -144,8 +144,10 @@ def notes_management() -> None:
             with open(file=csv_file_name, mode='r', encoding='utf8') as csvfile:
                 csvreader = reader(csvfile)
                 next(csvreader)  # избавляемся от заголовка
-                cur_id = (Note.instances[-1].id + 1) if Note.instances else 1
-                for row in csvreader:
+                for cur_id, row in enumerate(
+                        csvreader,
+                        start=(Note.instances[-1].id + 1) if Note.instances else 1
+                ):
                     Note(
                         id=cur_id,
                         title=row[1],
