@@ -20,7 +20,7 @@ class Note:
         self.instances.append(self)
 
     def _get_timestamp_str(self) -> str:
-        return self.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+        return self.timestamp.strftime('%d-%m-%Y %H:%M:%S')
 
     timestamp_str = property(fget=_get_timestamp_str)
 
@@ -52,7 +52,7 @@ def save_all_in_json() -> None:
 if exists(file_name):
     with open(file=file_name, encoding='utf8') as file:
         for d in load(file):
-            d['timestamp'] = datetime.strptime(d['timestamp'], '%Y-%m-%d %H:%M:%S')
+            d['timestamp'] = datetime.strptime(d['timestamp'], '%d-%m-%Y %H:%M:%S')
             Note(
                 **{
                     attr_name: d[attr_name]
@@ -150,7 +150,7 @@ def notes_management() -> None:
                         id=cur_id,
                         title=row[1],
                         content=row[2],
-                        timestamp=datetime.strptime(row[3], '%Y-%m-%d %H:%M:%S')
+                        timestamp=datetime.strptime(row[3], '%d-%m-%Y %H:%M:%S')
                     )
                 save_all_in_json()
         case 7:
